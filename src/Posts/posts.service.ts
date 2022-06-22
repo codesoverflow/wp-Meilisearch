@@ -20,7 +20,7 @@ export class PostsService {
       date,
       slug,
       title,
-      content,
+      //content,
     };
 
     return finalPost;
