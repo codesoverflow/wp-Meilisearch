@@ -3,14 +3,12 @@ import { chunk } from 'lodash';
 import { CategoriesService } from '../Categories/categories.service';
 import { PostsService } from './posts.service';
 
-
 @Injectable()
 export class PostsLoaderService {
   constructor(
     private readonly categoryService: CategoriesService,
     private readonly postService: PostsService,
   ) { }
-
 
   async loadCategoriesAndSyncPosts(): Promise<SyncType> {
     try {
@@ -36,7 +34,6 @@ export class PostsLoaderService {
 
     for (const webCatChunk of webCatChunks) {
       for (const webCat of webCatChunk) {
-
         if (webCat?.id) {
           const postCount = webCat?.count;
           const categoryId = webCat?.id;

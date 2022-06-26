@@ -27,7 +27,6 @@ export class PostsService {
   }
 
   async addPosts(data: any): Promise<any> {
-
     const { categoryId, webPosts } = data;
 
     const formattedPosts = webPosts.map((webPost) =>
@@ -42,6 +41,14 @@ export class PostsService {
     return await postsIndex.addDocuments(formattedPosts);
   }
 
+  async searchPosts(searchQuery = ''): Promise<any> {
+    const mlInstance = this.meiliSearchService.getInstance();
+    const postsIndex = await mlInstance.index(
+      this.meiliSearchService.getIndexName(),
+    );
+
+    return await postsIndex.search(searchQuery);
+  }
 
   // eslint-disable-next-line @typescript-eslint/ban-types
   async getNetworkPosts({
@@ -86,7 +93,7 @@ export interface WebPostType {
   title: { rendered: string };
   content: { rendered: string };
   categoryId: number;
-};
+}
 
 type WebPostsType = {
   error?: Error;

@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { PostsLoaderService } from './postsLoader.service';
 
@@ -15,6 +15,10 @@ export class PostsController {
     return await this.postsLoaderService.loadCategoriesAndSyncPosts();
   }
 
+  @Get('search/:query')
+  async searchPosts(@Param('query') query): Promise<Object> {
+    return await this.postService.searchPosts(query);
+  }
 }
 
 type PostsQuery = {

@@ -27,17 +27,24 @@ export class MeiliSearchService {
     try {
       postsIndex = await this.client.index(indexName).getRawInfo();
     } catch (error) {
-      console.log({ error })
+      console.log({ error });
     }
-
 
     if (postsIndex && postsIndex.uid) {
       await this.client.updateIndex(indexName, { primaryKey: 'id' });
+
     } else {
-      await this.client.createIndex(indexName, { primaryKey: 'id' });
+      await this.client.createIndex(indexName, {
+        primaryKey: 'id',
+      });
     }
+
+    await this.client.index('movies').updateSettings({
+      searchableAttributes: ['title', 'slug'],
+      filterableAttributes: ['title', 'slug'],
+      sortableAttributes: ['title', 'slug'],
+    });
 
     console.log({ postsIndex });
   }
-
 }
