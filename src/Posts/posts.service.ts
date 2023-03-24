@@ -3,7 +3,7 @@ import { MeiliSearchService } from './meilisearch.service';
 
 @Injectable()
 export class PostsService {
-  constructor(private readonly meiliSearchService: MeiliSearchService) { }
+  constructor(private readonly meiliSearchService: MeiliSearchService) {}
 
   formatPost(postData: any): any {
     const {
@@ -20,7 +20,7 @@ export class PostsService {
       date,
       slug,
       title,
-      //content,
+      content,
     };
 
     return finalPost;
@@ -78,6 +78,10 @@ export class PostsService {
         posts: [],
       };
     }
+  }
+
+  getKeys() {
+    return this.meiliSearchService.getKeys();
   }
 }
 
