@@ -7,7 +7,7 @@ import {
   SearchParams,
 } from 'meilisearch/src/types';
 
-const indexName = 'posts3';
+let indexName = process.env.INDEX_NAME;
 
 @Injectable()
 export class MeiliSearchService {
@@ -17,7 +17,12 @@ export class MeiliSearchService {
       host: process.env.MEILISEARCH_HOST,
       apiKey: process.env.MEILISEARCH_KEY,
     });
-    this.checkAndCreateIndex();
+    indexName = process.env.INDEX_NAME;
+    try {
+      this.checkAndCreateIndex();
+    } catch (error) {
+      console.log({ error });
+    }
   }
 
   getInstance(): MeiliSearch {
@@ -36,7 +41,7 @@ export class MeiliSearchService {
       console.log({ error });
     }
 
-    if (postsIndex && postsIndex.uid) {
+    if (postsIndex && postsIndex?.uid) {
       await this.client.updateIndex(indexName, { primaryKey: 'id' });
     } else {
       await this.client.createIndex(indexName, {
@@ -44,7 +49,7 @@ export class MeiliSearchService {
       });
     }
 
-    await this.client.index('movies').updateSettings({
+    await this.client.index(indexName).updateSettings({
       searchableAttributes: ['title', 'slug'],
       filterableAttributes: ['title', 'slug'],
       sortableAttributes: ['title', 'slug'],
