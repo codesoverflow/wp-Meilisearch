@@ -1,13 +1,15 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { PostsLoaderService } from './postsLoader.service';
-import { Result, Key } from 'meilisearch/src/types';
+import { ResourceResults, Key } from 'meilisearch/src/types';
+import { MeiliSearchService } from './meilisearch.service';
 
 @Controller('posts')
 export class PostsController {
   constructor(
     private readonly postService: PostsService,
     private readonly postsLoaderService: PostsLoaderService,
+    private readonly meiliSearchService: MeiliSearchService,
   ) {}
 
   @Get('loadCategoriesAndSyncPosts')
@@ -21,8 +23,18 @@ export class PostsController {
   }
 
   @Get('keys')
-  async getKeys(): Promise<Result<Key[]>> {
+  async getKeys(): Promise<ResourceResults<Key[]>> {
     return await this.postService.getKeys();
+  }
+
+  @Get('createOrUpdateKey')
+  async createOrUpdateKey(): Promise<ResourceResults<Key[]>> {
+    return await this.meiliSearchService.createOrUpdateKey();
+  }
+
+  @Get('deleteKey/:key')
+  async deleteKey(@Param('key') key: string): Promise<ResourceResults<Key[]>> {
+    return await this.meiliSearchService.deleteKey(key);
   }
 }
 

@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { MeiliSearch } from 'meilisearch';
-import { Result, Key } from 'meilisearch/src/types';
+import {
+  Key,
+  ResourceResults,
+  SearchResponse,
+  SearchParams,
+} from 'meilisearch/src/types';
 
 const indexName = 'posts3';
 
@@ -9,8 +14,8 @@ export class MeiliSearchService {
   client: MeiliSearch = null;
   constructor() {
     this.client = new MeiliSearch({
-      host: 'http://68.183.83.76:8080',
-      apiKey: 'l3_SyIFmdNPQ-JMrfVtyD4rmwc8d-QvxSz7kqNgHa-E',
+      host: process.env.MEILISEARCH_HOST,
+      apiKey: process.env.MEILISEARCH_KEY,
     });
     this.checkAndCreateIndex();
   }
@@ -48,10 +53,65 @@ export class MeiliSearchService {
     console.log({ postsIndex });
   }
 
-  async getKeys(): Promise<Result<Key[]>> {
-    let keys: Result<Key[]> = { results: [] };
+  async getKeys(): Promise<ResourceResults<Key[]>> {
+    let keys: ResourceResults<Key[]> = { results: [], total: 0 };
     try {
       keys = await this.client.getKeys();
+    } catch (error) {
+      console.log({ error });
+    }
+
+    return keys;
+  }
+
+  // async getPosts(
+  //   searchKey: string,
+  // ): Promise<ResourceResults<SearchResponse[]>> {
+  //   let posts: ResourceResults<SearchResponse[]> = {
+  //     results: [],
+  //     total: 0,
+  //   };
+  //   try {
+  //     posts = await this.getInstance()
+  //       .index(this.getIndexName())
+  //       .search(searchKey);
+  //   } catch (error) {
+  //     console.log({ error });
+  //   }
+
+  //   return posts;
+  // }
+
+  async createOrUpdateKey(): Promise<ResourceResults<Key[]>> {
+    let keys; //: ResourceResults<Key[]> = { results: [], total: 0 };
+    try {
+      keys = await this.client.createKey({
+        uid: 'e0b78a511fb62ff845739184c65b7e1c', //process.env.MEILISEARCH_SEARCH_KEY,
+        actions: ['search'],
+        indexes: ['*'],
+        expiresAt: new Date('31/12/2040'),
+      });
+
+      // keys = await this.client.updateKey(
+      //   process.env.MEILISEARCH_SEARCH_KEY,
+      //   {},
+      // );
+    } catch (error) {
+      console.log({ error });
+    }
+
+    return keys;
+  }
+
+  async deleteKey(key: string): Promise<ResourceResults<Key[]>> {
+    let keys; //: ResourceResults<Key[]> = { results: [], total: 0 };
+    try {
+      keys = await this.client.deleteKey(key);
+
+      // keys = await this.client.updateKey(
+      //   process.env.MEILISEARCH_SEARCH_KEY,
+      //   {},
+      // );
     } catch (error) {
       console.log({ error });
     }
