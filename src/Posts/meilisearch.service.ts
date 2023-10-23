@@ -51,7 +51,7 @@ export class MeiliSearchService {
 
     await this.client.index(indexName).updateSettings({
       searchableAttributes: ['title', 'slug'],
-      filterableAttributes: ['title', 'slug'],
+      filterableAttributes: ['title', 'slug', 'categoryId'],
       sortableAttributes: ['title', 'slug'],
     });
 
